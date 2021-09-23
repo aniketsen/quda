@@ -92,8 +92,22 @@ namespace quda
     const real eps_ti_mom[3] = { MPI2 * arg.px * arg.mom_eps / (real)arg.U.X[0],
                                  MPI2 * arg.py * arg.mom_eps / (real)arg.U.X[1],
                                  MPI2 * arg.pz * arg.mom_eps / (real)arg.U.X[2] };
-    const complex<real> phase_pos[3], phase_neg[3];
-    phase_pos[0] = complex<real>(eps_ti_mom[0]);
+    complex<real> phase_pos[3], phase_neg[3];
+
+    phase_pos[0].x = cos(eps_ti_mom[0]);
+    phase_pos[0].y = sin(eps_ti_mom[0]);
+    phase_pos[1].x = cos(eps_ti_mom[1]);
+    phase_pos[1].y = sin(eps_ti_mom[1]);
+    phase_pos[2].x = cos(eps_ti_mom[2]);
+    phase_pos[2].y = sin(eps_ti_mom[2]);
+
+    phase_neg[0].x = cos(-eps_ti_mom[0]);
+    phase_neg[0].y = sin(-eps_ti_mom[0]);
+    phase_neg[1].x = cos(-eps_ti_mom[1]);
+    phase_neg[1].y = sin(-eps_ti_mom[1]);
+    phase_neg[2].x = cos(-eps_ti_mom[2]);
+    phase_neg[2].y = sin(-eps_ti_mom[2]);
+
 
 
     for (int d = 0; d < Arg::nDim; d++) { // loop over dimension
@@ -107,15 +121,16 @@ namespace quda
             // const int ghost_idx = ghostFaceIndexStaggered<1>(coord, arg.dim, d, 1);
             const int ghost_idx = ghostFaceIndex<1>(coord, arg.dim, d, arg.nFace);
             const Link U = arg.U(d, coord.x_cb, parity);
-            const Vector in = arg.in.Ghost(d, 1, ghost_idx, their_spinor_parity);
+            Vector in = arg.in.Ghost(d, 1, ghost_idx, their_spinor_parity);
+            if (d != 3) { in *= phase_pos[d]; }
 
-            out += U * in;
+            out += U * in1;
           } else if (doBulk<kernel_type>() && !ghost) {
 
             const int fwd_idx = linkIndexP1(coord, arg.dim, d);
             const Link U = arg.U(d, coord.x_cb, parity);
-            const Vector in = arg.in(fwd_idx, their_spinor_parity);
-            if (d == 0) { in = phase_pos[d] * in; }
+            Vector in = arg.in(fwd_idx, their_spinor_parity);
+            if (d != 3) { in *= phase_pos[d]; }
             
 
             out += U * in;
@@ -135,14 +150,16 @@ namespace quda
             const int ghost_idx = ghostFaceIndex<0>(coord, arg.dim, d, arg.nFace);
 
             const Link U = arg.U.Ghost(d, ghost_idx, 1 - parity);
-            const Vector in = arg.in.Ghost(d, 0, ghost_idx, their_spinor_parity);
+            Vector in = arg.in.Ghost(d, 0, ghost_idx, their_spinor_parity);
+            if (d != 3) { in *= phase_neg[d]; }
             
 	    
             out += conj(U) * in;
           } else if (doBulk<kernel_type>() && !ghost) {
 
             const Link U = arg.U(d, gauge_idx, 1 - parity);
-            const Vector in = arg.in(back_idx, their_spinor_parity);
+            Vector in = arg.in(back_idx, their_spinor_parity);
+            if (d != 3) { in *= phase_neg[d]; }
             
 
             out += conj(U) * in;

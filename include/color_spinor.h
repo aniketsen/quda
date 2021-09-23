@@ -171,6 +171,13 @@ namespace quda {
       return *this;
     }
 
+    __device__ __host__ inline ColorSpinor<Float, Nc, 4> &operator*=(complex<Float> &a)
+    {
+#pragma unroll
+        for (int i = 0; i < size; i++) { data[i] *= a; }
+        return *this;
+    }
+
     /**
 	Return this application of gamma_dim to this spinor
 	@param dim Which dimension gamma matrix we are applying

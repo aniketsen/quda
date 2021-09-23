@@ -36,10 +36,14 @@ namespace quda
     const G U;    /** the gauge field */
     const real a; /** xpay scale factor - can be -kappa or -kappa^2 */
     const real b; /** used by Wuppetal smearing kernel */
+    const int px;
+    const int py;
+    const int pz;
+    const double mom_eps
     int dir;      /** The direction from which to omit the derivative */
 
     LaplaceArg(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,
-               const ColorSpinorField &x, int parity, bool dagger, const int *comm_override) :
+               const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, int momentum[3] = {0,0,0}, double mom_epsilon = 0) :
 
       DslashArg<Float, nDim>(in, U, parity, dagger, a != 0.0 ? true : false, 1, false, comm_override),
       out(out),
@@ -49,7 +53,11 @@ namespace quda
       dir(dir),
       x(x),
       a(a),
-      b(b)
+      b(b),
+      px(momentum[0]),
+      py(momentum[1]),
+      pz(momentum[2]),
+      mom_eps(mom_epsilon)
     {
       if (in.V() == out.V()) errorQuda("Aliasing pointers");
       checkOrder(out, in, x);        // check all orders match
@@ -80,6 +88,14 @@ namespace quda
     typedef typename mapper<typename Arg::Float>::type real;
     typedef Matrix<complex<real>, Arg::nColor> Link;
     const int their_spinor_parity = (arg.nParity == 2) ? 1 - parity : 0;
+    const double MPI2 = M_PI * 2.;
+    double eps_ti_mom[3] = { ( MPI2 * g_momentum_smearing_epsilon * g_sink_momentum_list[mom_number][0] ) / arg.U.X[0], 
+                           ( MPI2 * g_momentum_smearing_epsilon * g_sink_momentum_list[mom_number][1] ) / arg.U.X[1],
+                           ( MPI2 * g_momentum_smearing_epsilon * g_sink_momentum_list[mom_number][2] ) / arg.U.X[2] };
+    complex<real> I(0.0,1.0);
+    complex<real> phase_pos[3], phase_neg[3];
+    phase_pos[0] = cos(eps_ti_mom[0]) + I*sin(eps_ti_mom[0]);
+
 
     for (int d = 0; d < Arg::nDim; d++) { // loop over dimension
       if (d != dir) {

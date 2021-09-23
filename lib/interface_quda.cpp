@@ -5605,7 +5605,7 @@ void copyExtendedResidentGaugeQuda(void* resident_gauge, QudaFieldLocation loc)
   //profilePlaq.TPSTOP(QUDA_PROFILE_TOTAL);
 }
 
-void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *inv_param, unsigned int n_steps, double alpha)
+void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *inv_param, unsigned int n_steps, double alpha, double mom_epsilon = 0, int momentum[3] = {0,0,0}, double mom_epsilon = 0)
 {
   //profileWuppertal.TPSTART(QUDA_PROFILE_TOTAL);
 
@@ -5651,7 +5651,7 @@ void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *inv_param, 
 
   for (unsigned int i = 0; i < n_steps; i++) {
     if (i) in = out;
-    ApplyLaplace(out, in, *precise, 3, a, b, in, parity, false, commDims, profileWuppertal);
+    ApplyLaplace(out, in, *precise, 3, a, b, in, parity, false, commDims, profileWuppertal, momentum, mom_epsilon);
     if (getVerbosity() >= QUDA_DEBUG_VERBOSE) {
       double norm = blas::norm2(out);
       printfQuda("Step %d, vector norm %e\n", i, norm);

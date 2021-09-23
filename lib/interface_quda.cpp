@@ -68,6 +68,7 @@ using namespace quda;
 
 static int R[4] = {0, 0, 0, 0};
 const int commDims[4] = {1, 1, 1, 1};
+const int defaultMOM[3] = {0, 0, 0};
 // setting this to false prevents redundant halo exchange but isn't yet compatible with HISQ / ASQTAD kernels
 static bool redundant_comms = false;
 
@@ -5605,7 +5606,7 @@ void copyExtendedResidentGaugeQuda(void* resident_gauge, QudaFieldLocation loc)
   //profilePlaq.TPSTOP(QUDA_PROFILE_TOTAL);
 }
 
-void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *inv_param, unsigned int n_steps, double alpha, double mom_epsilon = 0, int momentum[3] = {0,0,0}, double mom_epsilon = 0)
+void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *inv_param, unsigned int n_steps, double alpha, double mom_epsilon = 0, int momentum[3] = defaultMOM, double mom_epsilon = 0)
 {
   //profileWuppertal.TPSTART(QUDA_PROFILE_TOTAL);
 

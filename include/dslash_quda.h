@@ -634,7 +634,7 @@ namespace quda {
      @param[in] x Vector field we accumulate onto to
   */
   void ApplyLaplace(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,
-                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, int momentum[3] = {0,0,0}, double mom_epsilon);
+                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, int momentum[3], double mom_epsilon);
 
   /**
      @brief Driver for applying the covariant derivative

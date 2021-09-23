@@ -152,7 +152,7 @@ namespace quda
 
     inline LaplaceApply(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir,
                         double a, double b, const ColorSpinorField &x, int parity, bool dagger, const int *comm_override,
-                        TimeProfile &profile, int momentum[3] = {0,0,0}, double mom_epsilon = 0)
+                        TimeProfile &profile, int momentum[3], double mom_epsilon)
     {
       if (in.Nspin() == 1) {
 #if defined(GPU_STAGGERED_DIRAC) && defined(GPU_LAPLACE)
@@ -192,7 +192,7 @@ namespace quda
   // out(x) = M*in = - a*\sum_mu U_{-\mu}(x)in(x+mu) + U^\dagger_mu(x-mu)in(x-mu) + b*in(x)
   // Omits direction 'dir' from the operator.
   void ApplyLaplace(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,
-                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, int momentum[3] = {0,0,0}, double mom_epsilon)
+                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, int momentum[3], double mom_epsilon)
   {
     instantiate<LaplaceApply>(out, in, U, dir, a, b, x, parity, dagger, comm_override, profile, momentum, mom_epsilon);
   }

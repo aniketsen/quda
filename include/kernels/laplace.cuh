@@ -36,9 +36,15 @@ namespace quda
     const G U;    /** the gauge field */
     const real a; /** xpay scale factor - can be -kappa or -kappa^2 */
     const real b; /** used by Wuppetal smearing kernel */
-    const int px;
-    const int py;
-    const int pz;
+    const real eps_ti_px;
+    const real eps_ti_py;
+    const real eps_ti_pz;
+    const complex<real> phase_px;
+    const complex<real> phase_mx;
+    const complex<real> phase_py;
+    const complex<real> phase_my;
+    const complex<real> phase_pz;
+    const complex<real> phase_mz;
     const real mom_eps;
     int dir;      /** The direction from which to omit the derivative */
 
@@ -54,9 +60,15 @@ namespace quda
       x(x),
       a(a),
       b(b),
-      px(momentum[0]),
-      py(momentum[1]),
-      pz(momentum[2]),
+      eps_ti_px(M_PI * 2. * mom_epsilon * momentum[0] / U.X[0]),
+      eps_ti_py(M_PI * 2. * mom_epsilon * momentum[1] / U.X[1]),
+      eps_ti_pz(M_PI * 2. * mom_epsilon * momentum[2] / U.X[2]),
+      phase_px(complex<real>(cos(eps_ti_px),sin(eps_ti_px))),
+      phase_mx(complex<real>(cos(-eps_ti_px),sin(-eps_ti_px))),
+      phase_py(complex<real>(cos(eps_ti_py),sin(eps_ti_py))),
+      phase_py(complex<real>(cos(-eps_ti_py),sin(-eps_ti_py))),
+      phase_my(complex<real>(cos(eps_ti_pz),sin(eps_ti_pz))),
+      phase_mz(complex<real>(cos(-eps_ti_pz),sin(-eps_ti_pz))),
       mom_eps(mom_epsilon)
     {
       if (in.V() == out.V()) errorQuda("Aliasing pointers");
@@ -88,13 +100,6 @@ namespace quda
     typedef typename mapper<typename Arg::Float>::type real;
     typedef Matrix<complex<real>, Arg::nColor> Link;
     const int their_spinor_parity = (arg.nParity == 2) ? 1 - parity : 0;
-    const double MPI2 = M_PI * 2.;
-    double eps_ti_mom[3] = { ( MPI2 * arg.mom_eps * arg.px ) / arg.U.X[0], 
-                           ( MPI2 * arg.mom_eps * arg.py ) / arg.U.X[1],
-                           ( MPI2 * arg.mom_eps * arg.pz ) / arg.U.X[2] };
-    complex<real> I(0.0,1.0);
-    complex<real> phase_pos[3], phase_neg[3];
-    phase_pos[0] = cos(eps_ti_mom[0]) + I*sin(eps_ti_mom[0]);
 
 
     for (int d = 0; d < Arg::nDim; d++) { // loop over dimension
@@ -109,6 +114,12 @@ namespace quda
             const int ghost_idx = ghostFaceIndex<1>(coord, arg.dim, d, arg.nFace);
             const Link U = arg.U(d, coord.x_cb, parity);
             const Vector in = arg.in.Ghost(d, 1, ghost_idx, their_spinor_parity);
+            switch(d) {
+              case 0: in *= phase_px; break;
+              case 1: in *= phase_py; break;
+              case 2: in *= phase_pz; break;
+              default: break;
+            }
 
             out += U * in;
           } else if (doBulk<kernel_type>() && !ghost) {
@@ -116,6 +127,12 @@ namespace quda
             const int fwd_idx = linkIndexP1(coord, arg.dim, d);
             const Link U = arg.U(d, coord.x_cb, parity);
             const Vector in = arg.in(fwd_idx, their_spinor_parity);
+            switch(d) {
+              case 0: in *= phase_px; break;
+              case 1: in *= phase_py; break;
+              case 2: in *= phase_pz; break;
+              default: break;
+            }
 
             out += U * in;
           }
@@ -135,12 +152,24 @@ namespace quda
 
             const Link U = arg.U.Ghost(d, ghost_idx, 1 - parity);
             const Vector in = arg.in.Ghost(d, 0, ghost_idx, their_spinor_parity);
+            switch(d) {
+              case 0: in *= phase_mx; break;
+              case 1: in *= phase_my; break;
+              case 2: in *= phase_mz; break;
+              default: break;
+            }
 	    
             out += conj(U) * in;
           } else if (doBulk<kernel_type>() && !ghost) {
 
             const Link U = arg.U(d, gauge_idx, 1 - parity);
             const Vector in = arg.in(back_idx, their_spinor_parity);
+            switch(d) {
+              case 0: in *= phase_mx; break;
+              case 1: in *= phase_my; break;
+              case 2: in *= phase_mz; break;
+              default: break;
+            }
 
             out += conj(U) * in;
           }

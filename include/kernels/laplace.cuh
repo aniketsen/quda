@@ -108,7 +108,6 @@ namespace quda
             const int ghost_idx = ghostFaceIndex<1>(coord, arg.dim, d, arg.nFace);
             const Link U = arg.U(d, coord.x_cb, parity);
             const Vector in = arg.in.Ghost(d, 1, ghost_idx, their_spinor_parity);
-            if (d == 0) { in *= phase_pos[d]; }
 
             out += U * in;
           } else if (doBulk<kernel_type>() && !ghost) {
@@ -116,6 +115,7 @@ namespace quda
             const int fwd_idx = linkIndexP1(coord, arg.dim, d);
             const Link U = arg.U(d, coord.x_cb, parity);
             const Vector in = arg.in(fwd_idx, their_spinor_parity);
+            if (d == 0) { in = phase_pos[d] * in; }
             
 
             out += U * in;

@@ -91,6 +91,7 @@ extern "C" {
     size_t site_size; /**< Size of MILC site struct (only if gauge_order=MILC_SITE_GAUGE_ORDER) */
   } QudaGaugeParam;
 
+  int defaultMOM[3] = {0,0,0};
 
   /**
    * Parameters relating to the solver and the choice of Dirac operator.
@@ -1440,7 +1441,7 @@ extern "C" {
    * @param n_steps Number of steps to apply.
    * @param alpha  Alpha coefficient for Wuppertal smearing.
    */
-  void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *param, unsigned int n_steps, double alpha, int momentum[3], double mom_epsilon = 0);
+  void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *param, unsigned int n_steps, double alpha, int momentum[3] = defaultMOM, double mom_epsilon = 0);
 
   /**
    * Performs APE smearing on gaugePrecise and stores it in gaugeSmeared

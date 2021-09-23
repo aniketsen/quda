@@ -192,7 +192,7 @@ namespace quda
   // out(x) = M*in = - a*\sum_mu U_{-\mu}(x)in(x+mu) + U^\dagger_mu(x-mu)in(x-mu) + b*in(x)
   // Omits direction 'dir' from the operator.
   void ApplyLaplace(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,
-                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, int momentum[3] = defaultMOM, double mom_epsilon = 0)
+                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, int momentum[3], double mom_epsilon)
   {
     instantiate<LaplaceApply>(out, in, U, dir, a, b, x, parity, dagger, comm_override, profile, momentum, mom_epsilon);
   }

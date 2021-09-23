@@ -89,11 +89,11 @@ namespace quda
     typedef Matrix<complex<real>, Arg::nColor> Link;
     const int their_spinor_parity = (arg.nParity == 2) ? 1 - parity : 0;
     const real MPI2 = M_PI * 2;
-    const real eps_ti_mom[3] = { MPI2 * arg.px * arg.mom_eps / arg.U.X[0],
-                                 MPI2 * arg.py * arg.mom_eps / arg.U.X[1],
-                                 MPI2 * arg.pz * arg.mom_eps / arg.U.X[2] };
+    const real eps_ti_mom[3] = { MPI2 * arg.px * arg.mom_eps / (real)arg.U.X[0],
+                                 MPI2 * arg.py * arg.mom_eps / (real)arg.U.X[1],
+                                 MPI2 * arg.pz * arg.mom_eps / (real)arg.U.X[2] };
     const complex<real> phase_pos[3], phase_neg[3];
-    phase_pos[0] = complex<real>(cos(eps_ti_mom[0]),sin(eps_ti_mom[0]));
+    phase_pos[0] = complex<real>(eps_ti_mom[0]);
 
 
     for (int d = 0; d < Arg::nDim; d++) { // loop over dimension

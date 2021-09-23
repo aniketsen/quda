@@ -1210,6 +1210,17 @@ namespace quda {
         return y;
     }
 
+   template<typename Float, int Nc, int Ns> __device__ __host__ inline
+    ColorSpinor<Float,Nc,Ns> operator=(const ColorSpinor<Float,Nc,Ns> &x) {
+        ColorSpinor<Float,Nc,Ns> y;
+#pragma unroll
+        for (int i=0; i<Nc*Ns; i++) {
+            y.data[i].x = x.data[i].real();
+            y.data[i].y = x.data[i].imag();
+        }
+        return y;
+    }
+
   /**
      @brief Compute the matrix-vector product z = A * x + y
      @param[in] A Input matrix

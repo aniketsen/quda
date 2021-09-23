@@ -115,9 +115,9 @@ namespace quda
             const Link U = arg.U(d, coord.x_cb, parity);
             const Vector in = arg.in.Ghost(d, 1, ghost_idx, their_spinor_parity);
             switch(d) {
-              case 0: in *= arg.phase_px; break;
-              case 1: in *= arg.phase_py; break;
-              case 2: in *= arg.phase_pz; break;
+              case 0: in <complex<real>>*= arg.phase_px; break;
+              case 1: in <complex<real>>*= arg.phase_py; break;
+              case 2: in <complex<real>>*= arg.phase_pz; break;
               default: break;
             }
 
@@ -128,9 +128,9 @@ namespace quda
             const Link U = arg.U(d, coord.x_cb, parity);
             const Vector in = arg.in(fwd_idx, their_spinor_parity);
             switch(d) {
-              case 0: in *= arg.phase_px; break;
-              case 1: in *= arg.phase_py; break;
-              case 2: in *= arg.phase_pz; break;
+              case 0: in <complex<real>>*= arg.phase_px; break;
+              case 1: in <complex<real>>*= arg.phase_py; break;
+              case 2: in <complex<real>>*= arg.phase_pz; break;
               default: break;
             }
 
@@ -153,9 +153,9 @@ namespace quda
             const Link U = arg.U.Ghost(d, ghost_idx, 1 - parity);
             const Vector in = arg.in.Ghost(d, 0, ghost_idx, their_spinor_parity);
             switch(d) {
-              case 0: in *= arg.phase_mx; break;
-              case 1: in *= arg.phase_my; break;
-              case 2: in *= arg.phase_mz; break;
+              case 0: in <complex<real>>*= arg.phase_mx; break;
+              case 1: in <complex<real>>*= arg.phase_my; break;
+              case 2: in <complex<real>>*= arg.phase_mz; break;
               default: break;
             }
 	    
@@ -165,9 +165,9 @@ namespace quda
             const Link U = arg.U(d, gauge_idx, 1 - parity);
             const Vector in = arg.in(back_idx, their_spinor_parity);
             switch(d) {
-              case 0: in *= arg.phase_mx; break;
-              case 1: in *= arg.phase_my; break;
-              case 2: in *= arg.phase_mz; break;
+              case 0: in <complex<real>>*= arg.phase_mx; break;
+              case 1: in <complex<real>>*= arg.phase_my; break;
+              case 2: in <complex<real>>*= arg.phase_mz; break;
               default: break;
             }
 

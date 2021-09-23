@@ -1440,7 +1440,7 @@ extern "C" {
    * @param n_steps Number of steps to apply.
    * @param alpha  Alpha coefficient for Wuppertal smearing.
    */
-  void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *param, unsigned int n_steps, double alpha, int momentum[3] = {0,0,0}, double mom_epsilon = 0);
+  void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *param, unsigned int n_steps, double alpha, int momentum[3], double mom_epsilon = 0);
 
   /**
    * Performs APE smearing on gaugePrecise and stores it in gaugeSmeared

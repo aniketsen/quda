@@ -124,7 +124,7 @@ namespace quda
             Vector in = arg.in.Ghost(d, 1, ghost_idx, their_spinor_parity);
             if (d != 3) { in *= phase_pos[d]; }
 
-            out += U * in1;
+            out += U * in;
           } else if (doBulk<kernel_type>() && !ghost) {
 
             const int fwd_idx = linkIndexP1(coord, arg.dim, d);

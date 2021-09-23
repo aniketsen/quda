@@ -18,7 +18,6 @@
 
 namespace quda
 {
-  int defaultMOM[3] = {0, 0, 0};
 
   template <typename Arg> class Laplace : public Dslash<laplace, Arg>
   {

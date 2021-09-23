@@ -39,7 +39,7 @@ namespace quda
     const int px;
     const int py;
     const int pz;
-    const double mom_eps
+    const double mom_eps;
     int dir;      /** The direction from which to omit the derivative */
 
     LaplaceArg(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,

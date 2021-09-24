@@ -5609,9 +5609,9 @@ void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *inv_param, 
 {
   //profileWuppertal.TPSTART(QUDA_PROFILE_TOTAL);
   const double MPI2 = M_PI * 2;
-  const double eps_ti_mom[3] = { MPI2 * momentum[0] * mom_epsilon / (double)gaugePrecise->X[0],
-                                 MPI2 * momentum[1] * mom_epsilon / (double)gaugePrecise->X[1],
-                                 MPI2 * momentum[2] * mom_epsilon / (double)gaugePrecise->X[2] };
+  double eps_ti_mom[3] = { MPI2 * momentum[0] * mom_epsilon / (double)gaugePrecise->X()[0],
+                                 MPI2 * momentum[1] * mom_epsilon / (double)gaugePrecise->X()[1],
+                                 MPI2 * momentum[2] * mom_epsilon / (double)gaugePrecise->X()[2] };
 
   if (gaugePrecise == nullptr) errorQuda("Gauge field must be loaded");
 

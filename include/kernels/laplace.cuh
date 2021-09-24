@@ -56,7 +56,7 @@ namespace quda
       x(x),
       a(a),
       b(b),
-      phase_px(cos(eps_ti_mom[0]),sin(eps_ti_mom)),
+      phase_px(cos(eps_ti_mom[0]),sin(eps_ti_mom[0]))
       //phase_mx(phase_neg[0]),
       //phase_py(phase_pos[1]),
       //phase_my(phase_neg[1]),

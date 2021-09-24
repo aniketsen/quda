@@ -152,7 +152,7 @@ namespace quda
 
     inline LaplaceApply(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir,
                         double a, double b, const ColorSpinorField &x, int parity, bool dagger, const int *comm_override,
-                        TimeProfile &profile, double eps_ti_mom)
+                        TimeProfile &profile, double *eps_ti_mom)
     {
       if (in.Nspin() == 1) {
 #if defined(GPU_STAGGERED_DIRAC) && defined(GPU_LAPLACE)
@@ -172,7 +172,7 @@ namespace quda
 #if defined(GPU_WILSON_DIRAC) && defined(GPU_LAPLACE)
         constexpr int nDim = 4;
         constexpr int nSpin = 4;
-        LaplaceArg<Float, nSpin, nColor, nDim, recon> arg(out, in, U, dir, a, b, x, parity, dagger, comm_override, eps_ti_mom);
+        LaplaceArg<Float, nSpin, nColor, nDim, recon> arg(out, in, U, dir, a, b, x, parity, dagger, comm_override, eps_ti_mom[3]);
         Laplace<decltype(arg)> laplace(arg, out, in);
 
         dslash::DslashPolicyTune<decltype(laplace)> policy(
@@ -192,7 +192,7 @@ namespace quda
   // out(x) = M*in = - a*\sum_mu U_{-\mu}(x)in(x+mu) + U^\dagger_mu(x-mu)in(x-mu) + b*in(x)
   // Omits direction 'dir' from the operator.
   void ApplyLaplace(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,
-                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, double eps_ti_mom[3])
+                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, double *eps_ti_mom)
   {
     instantiate<LaplaceApply>(out, in, U, dir, a, b, x, parity, dagger, comm_override, profile, eps_ti_mom);
   }

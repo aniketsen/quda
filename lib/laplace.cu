@@ -172,7 +172,7 @@ namespace quda
 #if defined(GPU_WILSON_DIRAC) && defined(GPU_LAPLACE)
         constexpr int nDim = 4;
         constexpr int nSpin = 4;
-        LaplaceArg<Float, nSpin, nColor, nDim, recon> arg(out, in, U, dir, a, b, x, parity, dagger, comm_override, eps_ti_mom[3]);
+        LaplaceArg<Float, nSpin, nColor, nDim, recon> arg(out, in, U, dir, a, b, x, parity, dagger, comm_override, eps_ti_mom);
         Laplace<decltype(arg)> laplace(arg, out, in);
 
         dslash::DslashPolicyTune<decltype(laplace)> policy(
@@ -194,6 +194,6 @@ namespace quda
   void ApplyLaplace(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,
                     const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, double eps_ti_mom[3])
   {
-    instantiate<LaplaceApply>(out, in, U, dir, a, b, x, parity, dagger, comm_override, profile, eps_ti_mom[3]);
+    instantiate<LaplaceApply>(out, in, U, dir, a, b, x, parity, dagger, comm_override, profile, eps_ti_mom);
   }
 } // namespace quda

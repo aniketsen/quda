@@ -56,12 +56,12 @@ namespace quda
       x(x),
       a(a),
       b(b),
-      phase_px(cos(eps_ti_mom[0]),sin(eps_ti_mom[0]))
-      //phase_mx(phase_neg[0]),
-      //phase_py(phase_pos[1]),
-      //phase_my(phase_neg[1]),
-      //phase_pz(phase_pos[2]),
-      //phase_mz(phase_neg[2])
+      phase_px(cos(eps_ti_mom[0]),sin(eps_ti_mom[0])),
+      phase_mx(cos(-eps_ti_mom[0]),sin(-eps_ti_mom[0])),
+      phase_py(cos(eps_ti_mom[1]),sin(eps_ti_mom[1])),
+      phase_my(cos(-eps_ti_mom[1]),sin(-eps_ti_mom[1])),
+      phase_pz(cos(eps_ti_mom[2]),sin(eps_ti_mom[1])),
+      phase_mz(cos(-eps_ti_mom[2]),sin(-eps_ti_mom[2]))
     {
       if (in.V() == out.V()) errorQuda("Aliasing pointers");
       checkOrder(out, in, x);        // check all orders match
@@ -109,8 +109,8 @@ namespace quda
             const Link U = arg.U(d, coord.x_cb, parity);
             Vector in = arg.in.Ghost(d, 1, ghost_idx, their_spinor_parity);
             if (d == 0) { in *= arg.phase_px; }
-            //if (d == 1) { in *= arg.phase_py; }
-            //if (d == 2) { in *= arg.phase_pz; }
+            if (d == 1) { in *= arg.phase_py; }
+            if (d == 2) { in *= arg.phase_pz; }
 
             out += U * in;
           } else if (doBulk<kernel_type>() && !ghost) {
@@ -119,8 +119,8 @@ namespace quda
             const Link U = arg.U(d, coord.x_cb, parity);
             Vector in = arg.in(fwd_idx, their_spinor_parity);
             if (d == 0) { in *= arg.phase_px; }
-            //if (d == 1) { in *= arg.phase_py; }
-            //if (d == 2) { in *= arg.phase_pz; }
+            if (d == 1) { in *= arg.phase_py; }
+            if (d == 2) { in *= arg.phase_pz; }
             
 
             out += U * in;
@@ -142,8 +142,8 @@ namespace quda
             const Link U = arg.U.Ghost(d, ghost_idx, 1 - parity);
             Vector in = arg.in.Ghost(d, 0, ghost_idx, their_spinor_parity);
             if (d == 0) { in *= arg.phase_mx; }
-            //if (d == 1) { in *= arg.phase_my; }
-            //if (d == 2) { in *= arg.phase_mz; }
+            if (d == 1) { in *= arg.phase_my; }
+            if (d == 2) { in *= arg.phase_mz; }
             
 	    
             out += conj(U) * in;
@@ -152,8 +152,8 @@ namespace quda
             const Link U = arg.U(d, gauge_idx, 1 - parity);
             Vector in = arg.in(back_idx, their_spinor_parity);
             if (d == 0) { in *= arg.phase_mx; }
-            //if (d == 1) { in *= arg.phase_my; }
-            //if (d == 2) { in *= arg.phase_mz; }
+            if (d == 1) { in *= arg.phase_my; }
+            if (d == 2) { in *= arg.phase_mz; }
             
 
             out += conj(U) * in;

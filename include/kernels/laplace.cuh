@@ -36,14 +36,16 @@ namespace quda
     const G U;    /** the gauge field */
     const real a; /** xpay scale factor - can be -kappa or -kappa^2 */
     const real b; /** used by Wuppetal smearing kernel */
-    const real px;
-    const real py;
-    const real pz;
-    const real mom_eps;
+    const complex<real> phase_px;
+    const complex<real> phase_mx;
+    const complex<real> phase_py;
+    const complex<real> phase_my;
+    const complex<real> phase_pz;
+    const complex<real> phase_mz;
     int dir;      /** The direction from which to omit the derivative */
 
     LaplaceArg(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,
-               const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, int momentum[3], double mom_epsilon = 0) :
+               const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, complex<double> phase_pos[3], complex<double> phase_neg[3]) :
 
       DslashArg<Float, nDim>(in, U, parity, dagger, a != 0.0 ? true : false, 1, false, comm_override),
       out(out),
@@ -54,10 +56,12 @@ namespace quda
       x(x),
       a(a),
       b(b),
-      px(momentum[0]),
-      py(momentum[1]),
-      pz(momentum[2]),
-      mom_eps(mom_epsilon)
+      phase_px(phase_pos[0]),
+      phase_mx(phase_neg[0]),
+      phase_py(phase_pos[1]),
+      phase_my(phase_neg[1]),
+      phase_pz(phase_pos[2]),
+      phase_mz(phase_neg[2])
     {
       if (in.V() == out.V()) errorQuda("Aliasing pointers");
       checkOrder(out, in, x);        // check all orders match
@@ -88,25 +92,7 @@ namespace quda
     typedef typename mapper<typename Arg::Float>::type real;
     typedef Matrix<complex<real>, Arg::nColor> Link;
     const int their_spinor_parity = (arg.nParity == 2) ? 1 - parity : 0;
-    const real MPI2 = M_PI * 2;
-    const real eps_ti_mom[3] = { MPI2 * arg.px * arg.mom_eps / (real)arg.U.X[0],
-                                 MPI2 * arg.py * arg.mom_eps / (real)arg.U.X[1],
-                                 MPI2 * arg.pz * arg.mom_eps / (real)arg.U.X[2] };
-    complex<real> phase_pos[3], phase_neg[3];
-
-    phase_pos[0].x = cos(eps_ti_mom[0]);
-    phase_pos[0].y = sin(eps_ti_mom[0]);
-    phase_pos[1].x = cos(eps_ti_mom[1]);
-    phase_pos[1].y = sin(eps_ti_mom[1]);
-    phase_pos[2].x = cos(eps_ti_mom[2]);
-    phase_pos[2].y = sin(eps_ti_mom[2]);
-
-    phase_neg[0].x = cos(-eps_ti_mom[0]);
-    phase_neg[0].y = sin(-eps_ti_mom[0]);
-    phase_neg[1].x = cos(-eps_ti_mom[1]);
-    phase_neg[1].y = sin(-eps_ti_mom[1]);
-    phase_neg[2].x = cos(-eps_ti_mom[2]);
-    phase_neg[2].y = sin(-eps_ti_mom[2]);
+    
 
 
 
@@ -122,7 +108,9 @@ namespace quda
             const int ghost_idx = ghostFaceIndex<1>(coord, arg.dim, d, arg.nFace);
             const Link U = arg.U(d, coord.x_cb, parity);
             Vector in = arg.in.Ghost(d, 1, ghost_idx, their_spinor_parity);
-            if (d != 3) { in *= phase_pos[d]; }
+            if (d == 0) { in *= arg.phase_px; }
+            if (d == 1) { in *= arg.phase_py; }
+            if (d == 2) { in *= arg.phase_pz; }
 
             out += U * in;
           } else if (doBulk<kernel_type>() && !ghost) {
@@ -130,7 +118,9 @@ namespace quda
             const int fwd_idx = linkIndexP1(coord, arg.dim, d);
             const Link U = arg.U(d, coord.x_cb, parity);
             Vector in = arg.in(fwd_idx, their_spinor_parity);
-            if (d != 3) { in *= phase_pos[d]; }
+            if (d == 0) { in *= arg.phase_px; }
+            if (d == 1) { in *= arg.phase_py; }
+            if (d == 2) { in *= arg.phase_pz; }
             
 
             out += U * in;
@@ -151,7 +141,9 @@ namespace quda
 
             const Link U = arg.U.Ghost(d, ghost_idx, 1 - parity);
             Vector in = arg.in.Ghost(d, 0, ghost_idx, their_spinor_parity);
-            if (d != 3) { in *= phase_neg[d]; }
+            if (d == 0) { in *= arg.phase_mx; }
+            if (d == 1) { in *= arg.phase_my; }
+            if (d == 2) { in *= arg.phase_mz; }
             
 	    
             out += conj(U) * in;
@@ -159,7 +151,9 @@ namespace quda
 
             const Link U = arg.U(d, gauge_idx, 1 - parity);
             Vector in = arg.in(back_idx, their_spinor_parity);
-            if (d != 3) { in *= phase_neg[d]; }
+            if (d == 0) { in *= arg.phase_mx; }
+            if (d == 1) { in *= arg.phase_my; }
+            if (d == 2) { in *= arg.phase_mz; }
             
 
             out += conj(U) * in;

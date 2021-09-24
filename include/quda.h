@@ -92,10 +92,6 @@ extern "C" {
   } QudaGaugeParam;
 
   int defaultMOM[3] = {0,0,0};
-  complex<double> def_phase_a(0.0,0.0);
-  complex<double> def_phase_b(0.0,0.0);
-  complex<double> def_phase_c(0.0,0.0);
-  complex<double> def_phase[3] = {def_phase_a, def_phase_b, def_phase_c};
 
   /**
    * Parameters relating to the solver and the choice of Dirac operator.

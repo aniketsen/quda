@@ -13,7 +13,7 @@
 
 namespace quda {
 
-  //int defaultMOM[3] = {0,0,0};
+  double default_eps_ti_mom[3] = {0.0,0.0,0.0};
 
   /**
     @param pack Sets whether to use a kernel to pack the T dimension
@@ -636,7 +636,7 @@ namespace quda {
      @param[in] x Vector field we accumulate onto to
   */
   void ApplyLaplace(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,
-                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, complex<double> phase_pos = def_phase, complex<double> phase_neg = def_phase);
+                    const ColorSpinorField &x, int parity, bool dagger, const int *comm_override, TimeProfile &profile, const double eps_ti_mom = defaulteps_ti_mom);
 
   /**
      @brief Driver for applying the covariant derivative

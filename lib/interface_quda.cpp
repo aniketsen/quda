@@ -5609,24 +5609,9 @@ void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *inv_param, 
 {
   //profileWuppertal.TPSTART(QUDA_PROFILE_TOTAL);
   const double MPI2 = M_PI * 2;
-  const double eps_ti_mom[3] = { MPI2 * momentum[0] * mom_epsilon / (double)gaugePrecise.X[0],
-                                 MPI2 * momentum[1] * mom_epsilon / (double)gaugePrecise.X[1],
-                                 MPI2 * momentum[2] * mom_epsilon / (double)gaugePrecise.X[2] };
-    complex<real> phase_pos[3], phase_neg[3];
-
-    phase_pos[0].x = cos(eps_ti_mom[0]);
-    phase_pos[0].y = sin(eps_ti_mom[0]);
-    phase_pos[1].x = cos(eps_ti_mom[1]);
-    phase_pos[1].y = sin(eps_ti_mom[1]);
-    phase_pos[2].x = cos(eps_ti_mom[2]);
-    phase_pos[2].y = sin(eps_ti_mom[2]);
-
-    phase_neg[0].x = cos(-eps_ti_mom[0]);
-    phase_neg[0].y = sin(-eps_ti_mom[0]);
-    phase_neg[1].x = cos(-eps_ti_mom[1]);
-    phase_neg[1].y = sin(-eps_ti_mom[1]);
-    phase_neg[2].x = cos(-eps_ti_mom[2]);
-    phase_neg[2].y = sin(-eps_ti_mom[2]);
+  const double eps_ti_mom[3] = { MPI2 * momentum[0] * mom_epsilon / (double)gaugePrecise->X[0],
+                                 MPI2 * momentum[1] * mom_epsilon / (double)gaugePrecise->X[1],
+                                 MPI2 * momentum[2] * mom_epsilon / (double)gaugePrecise->X[2] };
 
   if (gaugePrecise == nullptr) errorQuda("Gauge field must be loaded");
 
@@ -5670,7 +5655,7 @@ void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *inv_param, 
 
   for (unsigned int i = 0; i < n_steps; i++) {
     if (i) in = out;
-    ApplyLaplace(out, in, *precise, 3, a, b, in, parity, false, commDims, profileWuppertal, phase_pos, phase_neg);
+    ApplyLaplace(out, in, *precise, 3, a, b, in, parity, false, commDims, profileWuppertal, eps_ti_mom);
     if (getVerbosity() >= QUDA_DEBUG_VERBOSE) {
       double norm = blas::norm2(out);
       printfQuda("Step %d, vector norm %e\n", i, norm);

@@ -13,7 +13,7 @@
 
 namespace quda {
 
-  int defaultMOM[3] = {0,0,0};
+  //int defaultMOM[3] = {0,0,0};
 
   /**
     @param pack Sets whether to use a kernel to pack the T dimension

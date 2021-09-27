@@ -1441,7 +1441,7 @@ extern "C" {
    */
   void performWuppertalnStep(void *h_out, void *h_in, QudaInvertParam *param, unsigned int n_steps, double alpha);
 
-  void performMomentumnStep(void *h_out, void *h_in, QudaInvertParam *param, unsigned int n_steps, double alpha, int momentum[3], double mom_epsilon);
+  void performMomentumnStep(void *h_out, void *h_in, QudaInvertParam *param, unsigned int n_steps, double alpha, double eps_ti_mom[3]);
 
   /**
    * Performs APE smearing on gaugePrecise and stores it in gaugeSmeared

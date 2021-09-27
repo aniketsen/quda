@@ -37,11 +37,11 @@ namespace quda
     const real a; /** xpay scale factor - can be -kappa or -kappa^2 */
     const real b; /** used by Wuppetal smearing kernel */
     const complex<real> phase_px;
-    //const complex<real> phase_mx;
-    //const complex<real> phase_py;
-    //const complex<real> phase_my;
-    //const complex<real> phase_pz;
-    //const complex<real> phase_mz;
+    const complex<real> phase_mx;
+    const complex<real> phase_py;
+    const complex<real> phase_my;
+    const complex<real> phase_pz;
+    const complex<real> phase_mz;
     int dir;      /** The direction from which to omit the derivative */
 
     LaplaceArg(ColorSpinorField &out, const ColorSpinorField &in, const GaugeField &U, int dir, double a, double b,
